@@ -1,3 +1,4 @@
+import Alias from 'rollup-plugin-alias';
 import Babel from 'rollup-plugin-babel';
 import CommonJS from 'rollup-plugin-commonjs';
 import Flow from 'rollup-plugin-flow';
@@ -20,8 +21,12 @@ export default {
         'bplib': 'BPLib'
     },
     plugins: [
+        // Alias({
+        //     'react': 'preact-compat',
+        //     'react-dom': 'preact-compat'
+        // }),
         Replace({
-            'process.env.NODE_ENV': JSON.stringify('production')
+            'process.env.NODE_ENV': JSON.stringify('production'), 
         }),
         Babel({
             exclude: [
@@ -31,6 +36,7 @@ export default {
             babelrc: false,
 			sourceMap: true,
             plugins: [
+                "external-helpers",
                 "transform-es2015-parameters",
                 "transform-es2015-destructuring",
                 "transform-object-rest-spread",

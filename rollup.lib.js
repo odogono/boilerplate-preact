@@ -1,3 +1,4 @@
+import Alias from 'rollup-plugin-alias';
 import Babel from 'rollup-plugin-babel';
 import CommonJS from 'rollup-plugin-commonjs';
 import Flow from 'rollup-plugin-flow';
@@ -17,6 +18,18 @@ let Config = {
     format: 'iife',
     moduleName: 'BPLib',
     plugins: [
+        Alias({
+            'react': 'preact-compat',
+            'react-dom': 'preact-compat',
+            // 'measure': require.resolve('react-measure'),
+        }),
+        // ["module-resolver", {
+        //     "root":["."],
+        //     "alias": {
+        //         'react': 'preact-compat',
+        //         'react-dom': 'preact-compat'
+        //     }
+        // }],
         Replace({
             'process.env.NODE_ENV': JSON.stringify('production'),
             'process.env.PROMISE_QUEUE_COVERAGE': 'false',
@@ -27,12 +40,12 @@ let Config = {
             babelrc: false,
 			sourceMap: true,
             plugins: [
+                "external-helpers",
                 "transform-es2015-parameters",
                 "transform-es2015-destructuring",
                 "transform-object-rest-spread",
                 "transform-class-properties",
                 "transform-es2015-classes",
-                "external-helpers",
                 // "transform-async-to-generator",
                 ["transform-react-jsx", {pragma:'h'}],
             ]

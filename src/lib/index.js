@@ -9,5 +9,8 @@
 export {
     _,
     Alt,
+    CSS,
+    getNodeDimensions,
+    // Measure,
     Preact
 } from 'bplib';
