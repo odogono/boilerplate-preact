@@ -1,6 +1,7 @@
-import { _, getNodeDimensions, Preact } from '../lib';
-const {h, render, Component} = Preact;
-// import { h, render, Component } from 'preact';
+import _ from 'underscore';
+import {h, render, Component} from 'preact';
+import getNodeDimensions from 'get-node-dimensions';
+
 
 class Circle extends Component {
     render() {

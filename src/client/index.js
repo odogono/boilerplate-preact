@@ -1,14 +1,17 @@
-import { _, Preact } from '../lib';
-const {h, render, Component} = Preact;
+import _ from 'underscore';
+import {h, render, Component} from 'preact';
 
-import Clock from './clock';
-import {MainContainer, WorkflowDisplay} from './workflow_display';
+// register ServiceWorker via OfflinePlugin, for prod only:
+if (process.env.NODE_ENV==='production') {
+	require('./pwa');
+}
 
-console.log('created Clocked', _.uniqueId('clock') );
+let root;
+function init() {
+	let App = require('./app').default;
+    const mainEl = document.getElementById('main');
+	root = render(<App />, mainEl, root);
+}
 
-const mainEl = document.getElementById('main');
 
-// render an instance of Clock into <body>:
-render(<div id="container">
-    <MainContainer />
-</div>, mainEl);
+init();

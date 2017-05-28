@@ -1,6 +1,4 @@
-import { _, Preact } from '../lib';
-const {h, render, Component} = Preact;
-// import { h, render, Component } from 'preact';
+import { h, Component } from 'preact';
 
 export default class Clock extends Component {
     constructor() {
