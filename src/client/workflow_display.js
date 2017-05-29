@@ -2,6 +2,7 @@ import _ from 'underscore';
 import {h, render, Component} from 'preact';
 import getNodeDimensions from 'get-node-dimensions';
 
+require('./main.scss')
 
 class Circle extends Component {
     render() {

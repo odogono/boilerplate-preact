@@ -1,17 +1,26 @@
 const Path = require('path');
 const Webpack = require('webpack');
 
-const ExtractTextPlugin = 'extract-text-webpack-plugin';
-const HtmlWebpackPlugin = 'html-webpack-plugin';
-const CopyWebpackPlugin = 'copy-webpack-plugin';
-const ReplacePlugin = 'replace-bundle-webpack-plugin';
-const OfflinePlugin = 'offline-plugin';
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ReplacePlugin = require('replace-bundle-webpack-plugin');
+const OfflinePlugin = require('offline-plugin');
 
 const ENV = process.env.NODE_ENV || 'development';
 const isProduction = ENV === 'production';
-const outDir = Path.resolve(__dirname, './web/js');
+const dirOut = Path.resolve(__dirname, './web/js');
+const dirCSS = Path.resolve(__dirname, 'web/css');
 const contextPath = process.cwd();
 
+const extractSCSS = new ExtractTextPlugin({
+    allChunks: true,
+    filename: getPath => {
+        // console.log('dammit', Path.join( __dirname, getPath('css/[name].css').replace('css/js', 'css')) );
+        //   return getPath('css/[name].css').replace('css/js', '../css');
+        return '../' + getPath('css/[name].css').replace('css/js', 'css');
+    }
+});
 
 module.exports = {
     // devtool: "eval-source-map",
@@ -23,24 +32,24 @@ module.exports = {
     },
 
     output: {
-        path: outDir,
+        path: dirOut,
         filename: '[name].js'
     },
 
     resolve: {
-		extensions: ['.jsx', '.js', '.json'],
-		modules: [
-			// path.resolve(__dirname, "src/lib"),
-			Path.resolve(__dirname, "node_modules"),
-			'node_modules'
-		],
-		alias: {
-			// components: path.resolve(__dirname, "src/components"),    // used for tests
-			// style: path.resolve(__dirname, "src/style"),
-			'react': 'preact-compat',
-			'react-dom': 'preact-compat'
-		}
-	},
+        extensions: ['.jsx', '.scss', '.js', '.json'],
+        modules: [
+            // path.resolve(__dirname, "src/lib"),
+            Path.resolve(__dirname, 'node_modules'),
+            'node_modules'
+        ],
+        alias: {
+            TheClock: Path.resolve(__dirname, 'src/client/clock.js'),
+            react: 'preact-compat',
+            'react-dom': 'preact-compat',
+            'react-addons-css-transition-group': 'rc-css-transition-group'
+        }
+    },
 
     plugins: [
         new Webpack.DefinePlugin({
@@ -53,80 +62,105 @@ module.exports = {
         }),
         new Webpack.DllReferencePlugin({
             context: contextPath,
-            manifest: require(Path.join(outDir, 'vendor.json'))
-        })
-    ].concat(isProduction ? [
-        new webpack.optimize.UglifyJsPlugin({
-			output: {
-				comments: false
-			},
-			compress: {
-				unsafe_comps: true,
-				properties: true,
-				keep_fargs: false,
-				pure_getters: true,
-				collapse_vars: true,
-				unsafe: true,
-				warnings: false,
-				screw_ie8: true,
-				sequences: true,
-				dead_code: true,
-				drop_debugger: true,
-				comparisons: true,
-				conditionals: true,
-				evaluate: true,
-				booleans: true,
-				loops: true,
-				unused: true,
-				hoist_funs: true,
-				if_return: true,
-				join_vars: true,
-				cascade: true,
-				drop_console: true
-			}
-		}),
-        new OfflinePlugin({
-			relativePaths: false,
-			AppCache: false,
-			excludes: ['_redirects'],
-			ServiceWorker: {
-				events: true
-			},
-			cacheMaps: [
-				{
-					match: /.*/,
-					to: '/',
-					requestTypes: ['navigate']
-				}
-			],
-			publicPath: '/'
-		})
-    ] : []),
+            manifest: require(Path.join(dirOut, 'vendor.json'))
+        }),
+        extractSCSS
+    ].concat(
+        isProduction
+            ? [
+                  new webpack.optimize.UglifyJsPlugin({
+                      output: {
+                          comments: false
+                      },
+                      compress: {
+                          unsafe_comps: true,
+                          properties: true,
+                          keep_fargs: false,
+                          pure_getters: true,
+                          collapse_vars: true,
+                          unsafe: true,
+                          warnings: false,
+                          screw_ie8: true,
+                          sequences: true,
+                          dead_code: true,
+                          drop_debugger: true,
+                          comparisons: true,
+                          conditionals: true,
+                          evaluate: true,
+                          booleans: true,
+                          loops: true,
+                          unused: true,
+                          hoist_funs: true,
+                          if_return: true,
+                          join_vars: true,
+                          cascade: true,
+                          drop_console: true
+                      }
+                  }),
+                  new OfflinePlugin({
+                      relativePaths: false,
+                      AppCache: false,
+                      excludes: ['_redirects'],
+                      ServiceWorker: {
+                          events: true
+                      },
+                      cacheMaps: [
+                          {
+                              match: /.*/,
+                              to: '/',
+                              requestTypes: ['navigate']
+                          }
+                      ],
+                      publicPath: '/'
+                  })
+              ]
+            : []
+    ),
     module: {
         rules: [
             {
-				test: /\.jsx?$/,
-				exclude: Path.resolve(__dirname, 'src'),
-				enforce: 'pre',
-				use: 'source-map-loader'
-			},
+                test: /\.jsx?$/,
+                exclude: Path.resolve(__dirname, 'src'),
+                enforce: 'pre',
+                use: 'source-map-loader'
+            },
             {
                 test: /\.scss$/,
-                loaders: ['style', 'css', 'sass']
+                loader: extractSCSS.extract({
+                    fallback: 'style-loader',
+                    //resolve-url-loader may be chained before sass-loader if necessary
+                    use: ['css-loader', 'sass-loader']
+                })
             },
-			{
-				test: /\.jsx?$/,
-				exclude: /node_modules/,
-				use: 'babel-loader'
-			},
             {
-				test: /\.json$/,
-				use: 'json-loader'
-			},
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                use: 'babel-loader'
+            },
             {
-				test: /\.(xml|html|txt|md)$/,
-				use: 'raw-loader'
-			},
+                test: /\.json$/,
+                use: 'json-loader'
+            },
+            {
+                test: /\.(xml|html|txt|md)$/,
+                use: 'raw-loader'
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            sourceMap: true,
+                            importLoaders: 1,
+                            localIdentName: '[name]--[local]--[hash:base64:8]'
+                        }
+                    },
+                    'postcss-loader' // has separate config, see postcss.config.js nearby
+                ]
+            }
             // Loaders for other file types can go here
         ]
     }

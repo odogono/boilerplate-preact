@@ -1,0 +1,24 @@
+.login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 480px;
+}
+
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+button[type=submit] {
+    margin-top: 24px;
+    min-width: 300px;
+}
+
+.login-title {
+  background-color: #3949ab;
+  color: white;
+}

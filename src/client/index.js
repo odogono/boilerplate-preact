@@ -1,5 +1,6 @@
 import _ from 'underscore';
-import {h, render, Component} from 'preact';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 // register ServiceWorker via OfflinePlugin, for prod only:
 if (process.env.NODE_ENV==='production') {
@@ -10,7 +11,7 @@ let root;
 function init() {
 	let App = require('./app').default;
     const mainEl = document.getElementById('main');
-	root = render(<App />, mainEl, root);
+	root = ReactDOM.render(<App />, mainEl, root);
 }
 
 

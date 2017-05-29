@@ -12,6 +12,10 @@ const dirJS = Path.join(__dirname, 'web', 'js');
 const dirCSS = Path.join(__dirname, 'web', 'css');
 
 let plugins = [
+    new CopyWebpackPlugin([
+        // { from: 'node_modules/material-components-web/dist/material-components-web.js', to: dirJS },
+        { from: 'node_modules/material-components-web/dist/material-components-web.css', to: dirCSS }
+    ]),
     new Webpack.DllPlugin({
         name: '[name]',
         path: Path.join(outDir, '[name].json')
@@ -19,13 +23,13 @@ let plugins = [
     new Webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
 ];
 
-// if (isProduction) {
+if (isProduction) {
     plugins.push(
         new UglifyJSPlugin({
             sourceMap: true
         })
     );
-// }
+}
 
 module.exports = {
     context: process.cwd(),
@@ -35,16 +39,14 @@ module.exports = {
         vendor: [
             'alt',
             'get-node-dimensions',
+            'react-toolbox',
             'preact',
+            'preact-compat',
+            'preact-material-components',
+            'tcomb-form',
             'underscore',
         ]
     },
-    plugins: [
-        new CopyWebpackPlugin([
-            // { from: 'node_modules/material-components-web/dist/material-components-web.js', to: dirJS },
-            { from: 'node_modules/material-components-web/dist/material-components-web.css', to: dirCSS }
-        ]),
-    ],
     resolve: {
         alias: {
             'react': 'preact-compat',
@@ -52,6 +54,26 @@ module.exports = {
             // Not necessary unless you consume a module using `createClass`
             'create-react-class': 'preact-compat/lib/create-react-class'
         }
+    },
+    module:{
+        rules:[
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            sourceMap: true,
+                            importLoaders: 1,
+                            localIdentName: '[name]--[local]--[hash:base64:8]'
+                        }
+                    },
+                    'postcss-loader' // has separate config, see postcss.config.js nearby
+                ]
+            }
+        ]
     },
     output: {
         path: outDir,

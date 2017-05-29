@@ -1,4 +1,9 @@
-import { h, Component } from 'preact';
+// @flow
+
+import React from 'react';
+import { Component } from 'react';
+
+require('./main.scss');
 
 export default class Clock extends Component {
     constructor() {
@@ -14,6 +19,12 @@ export default class Clock extends Component {
         }, 1000);
     }
 
+    applyOffset(amount: Number) {}
+
+    simple(): string {
+        return '';
+    }
+
     componentWillUnmount() {
         // stop when not renderable
         clearInterval(this.timer);
@@ -21,6 +32,6 @@ export default class Clock extends Component {
 
     render(props, state) {
         let time = new Date(state.time).toLocaleTimeString();
-        return <span>{ time }</span>;
+        return <span className="timespan">{time}</span>;
     }
 }

@@ -1,14 +1,19 @@
-import { h, Component } from 'preact';
-// import { Router } from 'preact-router';
+import React from 'react';
+import {Component} from 'react';
 
-import Clock from './clock';
-import {MainContainer, WorkflowDisplay} from './workflow_display';
+import Clock from 'TheClock';
+// import Login from './login';
+import LoginRT from './login.rt';
+import LoginMTC from './login.mdc';
+
 
 export default class App extends Component {
     render() {
 		return (
 			<div id="app">
+                <div className='title'>The Clock</div>
                 <Clock />
+				<LoginRT/>
 			</div>
 		);
 	}

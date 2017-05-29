@@ -1,0 +1,40 @@
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 480px;
+    
+    .mdc-form-field{
+        display: flex;
+        flex-direction: column;
+        min-width: 50%;
+
+        margin-bottom: 24px;
+
+        input {
+            min-width: 300px;
+        }
+    }
+
+    .mdc-card__actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+
+    .mdc-card__supporting-text {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login {
+        min-width: 30%;
+        max-width: 384px;
+
+        button {
+            min-width: 300px;
+        }
+    }
+}
